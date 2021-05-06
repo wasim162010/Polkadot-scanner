@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <script type = "text/javascript" 
+        src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
+     </script>
+    <script type = "text/javascript" language = "javascript">
+        $(document).ready(function() {
+
+            $("#btn").click(function(event){
+                $("#curVal").val('');
+                   $.post('/increment', function (data) {
+                        console.log("increment called");
+                    });
+            });
+
+            $("#curbtn").click(function(event){
+                $.get('/curValue', function (data) {
+                    console.log("curValue called");
+                    console.log(data);
+                    $("#curVal").val(data);
+                });
+            });
+
+                $("#resetbtn").click(function(event){
+                    $("#curVal").val('');
+                    $.post('/resetValue', function (data) {
+                        console.log("resetValue called");
+                        console.log(data);
+                    });                
+                 });
+        });
+
+    </script>
+
+    <meta charset="UTF-8">
+    <title>Sample Site</title>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <style>
+        body { padding-top:50px; }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Simple DApp for the counter contract</h1>
+        </div>
+        <!-- <input type = "button" id = "btn" value = "Increment value" /> -->
+       
+        <div> 
+           
+            <br/>
+            <!-- <input type = "label" id = "lbl1" value = "Start block" />  -->
+            Start block
+            <input type = "text" id = "txtStartBlock"  />
+            <br/>
+
+            End block
+            <!-- <input type = "label" id = "lbl2" value = "End block" />  -->
+            <input type = "text" id = "txtEndBlock" />
+            <br/>
+
+            End point
+            <!-- <input type = "label" id = "lbl3" value = "End point" />  -->
+            <input type = "text" id = "txtEndPoint" />
+            <br/>
+
+            <input type = "button" id = "btn" value = "Scan" /> 
+            <br />
+
+         
+            <br />
+
+        </div>
+
+        <div> 
+           
+               
+        </div>
+    </div>
+    
+
+</body>
+</html>
