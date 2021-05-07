@@ -13,54 +13,84 @@ app.listen(port, () => console.log(`This app is listening on port ${port}`));
 
 const verify = async (username) => { //to verify the user.
 
-  console.log("calling verify")
-  const httpProvider = new HttpProvider(process.env.DATAHUB_URL);
-  console.log("httpProvider")
-  const api = await ApiPromise.create({ provider: httpProvider });  
-  console.log("api")
-  const { decodeAddress, encodeAddress } = require('@polkadot/keyring');//val  
-  const { hexToU8a, isHex } = require('@polkadot/util'); //val
+    console.log("calling verify ",username)
 
-  const address = username //process.env.ADDRESS //'5GrpknVvGGrGH3EFuURXeMrWHvbpj3VfER1oX5jFtuGbfzCE';
-  console.log("address ",address)
-  try {
-    encodeAddress(
-      isHex(address)
-        ? hexToU8a(address)
-        : decodeAddress(address)
-    );
-      return true
-  } catch (error) {
+    const httpProvider = new HttpProvider(process.env.DATAHUB_URL);
+    console.log("httpProvider")
+    const api = await ApiPromise.create({ provider: httpProvider });  
+    console.log("api")
 
-    return false;
-  }
+    const { decodeAddress, encodeAddress } = require('@polkadot/keyring');//val  
+    const { hexToU8a, isHex } = require('@polkadot/util'); //val
 
-
+    const address = username //process.env.ADDRESS //'5GrpknVvGGrGH3EFuURXeMrWHvbpj3VfER1oX5jFtuGbfzCE';
+    console.log("address ",address)
+    try {
+      encodeAddress(
+        isHex(address)
+          ? hexToU8a(address)
+          : decodeAddress(address)
+      );
+      console.log("true ",true)
+        return true
+    } catch (error) {
+      console.log("false ",false)
+      return false;
+    }
 }
 
-const queryEvent = async () => { //to verify the user.
+// queryEvent(_startblock,_endBlock,_endPoint)
+const queryEvent = async (_startblock,_endBlock,_endPoint) => { //to verify the user.
 
-  console.log("httpProvider")
+  console.log("queryEvent ",_startblock, _endBlock ,_endPoint );
   const httpProvider = new HttpProvider(process.env.DATAHUB_URL);
   console.log("httpProvider")
   const api = await ApiPromise.create({ provider: httpProvider });  
   console.log("api")
 
-  const height = 4626906;
-  const blockHash = await api.rpc.chain.getBlockHash(height);
+  //const height = 4886511;
+  //const blockHash = await api.rpc.chain.getBlockHash(height);
+  let eventArray = [];
 
-  console.log("blockHash ", blockHash)
+  for(i=_endBlock;i>=_startblock;i--){
 
-  console.log("calling queryEvent")
-  const events = await api.query.system.events.at(blockHash);
-  await api.query.system.events.query
-  events.forEach((event, index) => {
-    console.log(`Event ${index}: `, event.event.toHuman());
-  });
-    return true;
+    var hash = await api.rpc.chain.getBlockHash(i); 
+    var events = await api.query.system.events.at(hash);
+   // console.log(`\n #${i} Received ${events.length} events:`);
+
+   // api.query.system.events(async (events) => {
+
+     // let header = await api.rpc.chain.getHeader();
+      //let blockNumber = header.toJSON().number;
+
+    
+      events.forEach((record) => {
+
+        const { event, phase } = record;
+        const types = event.typeDef;
+        eventArray.push(
+          `\t${event.section}:${
+            event.method
+          }:: (phase=${phase.toString()}): 
+          \t\t${event.meta.documentation.toString()}`
+
+      );
+    });
+
+    //console.log("eventArray ", eventArray);
+
+
+   
+
+  //  });
   }
 
-  const traverseEvents = async() => {
+  console.log(eventArray)
+
+  return eventArray
+}
+
+const traverseEvents = async() => {
 
     const httpProvider = new HttpProvider(process.env.DATAHUB_URL);
     console.log("httpProvider")
@@ -96,25 +126,13 @@ const queryEvent = async () => { //to verify the user.
   }
 
 
+// data: {'startblock':$('#txtStartBlock').val(), 'endBlock':$('#txtEndBlock').val(),'endPoint':$('#txtEndPoint').val() },
 
 // res.sendFile(__dirname + '/static/login.html');
-  app.get('/queryEvent', async (req, res) => { //to verify the user.
-    var istrue = await queryEvent();
-    console.log("istrue ", istrue)
-    res.send(istrue)
-  });
-  
-  
-  app.get('/traverseEvents', async (req, res) => { //to verify the user.
-    await traverseEvents();
-    //console.log("istrue ", istrue)
-    res.send("done")
-  });
 
-
-  app.get('/', async (req, res) => { //to verify the user.
+app.get('/', async (req, res) => { //to verify the user.
     
-    res.sendFile(__dirname + '/UI/static/index.html');
+  res.sendFile(__dirname + '/UI/static/index.html');
 });
 
 
@@ -123,16 +141,48 @@ app.get('/login',  async (req, res) => {
   res.sendFile(__dirname + '/UI/static/login.html');
 });
 
+
+
 app.post('/login', async (req, res) => {
   // Insert Login Code Here
   let username = req.body.username;
+  console.log("username ",username);
   var istrue = await verify(username);
+  console.log("istrue ",istrue);
   if(istrue) {
     res.sendFile(__dirname + '/UI/homepage.html');
   } else {
   res.send(`Enter correct user name`);
   }
 });
+
+
+
+
+app.get('/queryEvent', async (req, res) => { //to verify the user.
+
+  // let page = req.query.page;
+  // let limit = req.query.limit;
+    let _startblock = req.query.startblock;
+    let _endBlock = req.query.endBlock;
+    let _endPoint = req.query.endPoint;
+
+    var istrue = await queryEvent(_startblock,_endBlock,_endPoint);
+    console.log("istrue ", istrue)
+    res.send(istrue)
+});
+  
+  
+app.get('/traverseEvents', async (req, res) => { //to verify the user.
+    await traverseEvents();
+    //console.log("istrue ", istrue)
+    res.send("done")
+});
+
+
+
+
+
 
 
         

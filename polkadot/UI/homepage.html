@@ -9,28 +9,63 @@
     <script type = "text/javascript" language = "javascript">
         $(document).ready(function() {
 
-            $("#btn").click(function(event){
-                $("#curVal").val('');
-                   $.post('/increment', function (data) {
-                        console.log("increment called");
-                    });
-            });
+            $("#queryevents").click(function(event){ 
 
-            $("#curbtn").click(function(event){
-                $.get('/curValue', function (data) {
-                    console.log("curValue called");
-                    console.log(data);
-                    $("#curVal").val(data);
+                if ( $('#txtStartBlock').val() == "" || $('#txtEndBlock').val() == "" || $('#txtEndPoint').val() == "" ){
+                
+                    if ($('#txtStartBlock').val() == ""){
+                        alert('Enter start block number.Its mandatory.');
+                    }
+         
+                    if ($('#txtEndBlock').val() == ""){
+                
+                       var r = confirm("Do you want to set this field to the default(latest) block?");
+                        if (r == true) {
+                           
+                            $('#txtEndBlock').val("default")
+                        } else {
+                            alert('Enter end block number.');
+                        }
+
+                    }
+
+                    if($('#txtEndPoint').val() == "" ) {
+                        var r = confirm("Do you want to set this field to the default(wss://rpc.polkadot.io) endpoint?");
+                        if (r == true) {
+                          
+                            $('#txtEndPoint').val("wss://rpc.polkadot.io")
+                        } else {
+                            alert('Enter the end point');
+                        }
+                    }
+
+                } //if condition
+                else if($('#txtStartBlock').val() > $('#txtEndBlock').val()){
+                    alert('Start block number cannot be greater then end block');
+                }
+                
+                    
+
+                // $.ajax({
+                //             type: "GET",
+                //             url: '/queryEvent',
+                //             contentType:'application/json',
+                //             data: JSON.stringify( {startblock: $('#txtStartBlock').val(), endBlock: $('#txtEndBlock').val(),endPoint: $('#txtEndPoint').val() }),
+                //             success: function(msg){
+                //               $('#eventsview').val(msg);
+                //             }
+                //     });
+
+                var url = '/queryEvent?startblock='+ $('#txtStartBlock').val() + '&endBlock=' + $('#txtEndBlock').val() + '&endPoint=' + $('#txtEndPoint').val()
+                $.get(url, function (data) {
+                  //  console.log("queryEvent called");
+                    //console.log(data);
+                    $("#eventsview").val(data);
                 });
+
             });
 
-                $("#resetbtn").click(function(event){
-                    $("#curVal").val('');
-                    $.post('/resetValue', function (data) {
-                        console.log("resetValue called");
-                        console.log(data);
-                    });                
-                 });
+            
         });
 
     </script>
@@ -48,31 +83,35 @@
 
     <div class="container">
         <div class="jumbotron">
-            <h1>Simple DApp for the counter contract</h1>
+            <h1>Polkadot event scanner</h1>
         </div>
-        <!-- <input type = "button" id = "btn" value = "Increment value" /> -->
+ 
        
         <div> 
            
             <br/>
-            <!-- <input type = "label" id = "lbl1" value = "Start block" />  -->
+     
             Start block
             <input type = "text" id = "txtStartBlock"  />
             <br/>
 
             End block
-            <!-- <input type = "label" id = "lbl2" value = "End block" />  -->
+ 
             <input type = "text" id = "txtEndBlock" />
             <br/>
 
             End point
-            <!-- <input type = "label" id = "lbl3" value = "End point" />  -->
+
             <input type = "text" id = "txtEndPoint" />
             <br/>
 
-            <input type = "button" id = "btn" value = "Scan" /> 
+            <input type = "button" id = "queryevents" value = "Scan" /> 
             <br />
+            <br />
+            
+            <textarea id="eventsview" name="txtarea" rows="20" cols="50">
 
+            </textarea>
          
             <br />
 
