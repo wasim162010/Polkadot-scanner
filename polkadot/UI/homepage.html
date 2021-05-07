@@ -33,7 +33,7 @@
                         var r = confirm("Do you want to set this field to the default(wss://rpc.polkadot.io) endpoint?");
                         if (r == true) {
                           
-                            $('#txtEndPoint').val("wss://rpc.polkadot.io")
+                            $('#txtEndPoint').val("default provider set in background")
                         } else {
                             alert('Enter the end point');
                         }
@@ -44,23 +44,12 @@
                     alert('Start block number cannot be greater then end block');
                 }
                 
-                    
-
-                // $.ajax({
-                //             type: "GET",
-                //             url: '/queryEvent',
-                //             contentType:'application/json',
-                //             data: JSON.stringify( {startblock: $('#txtStartBlock').val(), endBlock: $('#txtEndBlock').val(),endPoint: $('#txtEndPoint').val() }),
-                //             success: function(msg){
-                //               $('#eventsview').val(msg);
-                //             }
-                //     });
 
                 var url = '/queryEvent?startblock='+ $('#txtStartBlock').val() + '&endBlock=' + $('#txtEndBlock').val() + '&endPoint=' + $('#txtEndPoint').val()
                 $.get(url, function (data) {
-                  //  console.log("queryEvent called");
-                    //console.log(data);
+            
                     $("#eventsview").val(data);
+                 
                 });
 
             });
@@ -92,25 +81,29 @@
             <br/>
      
             Start block
-            <input type = "text" id = "txtStartBlock"  />
-            <br/>
+        </t> <input type = "text" id = "txtStartBlock"  />
+        <br/>
+        <br/>
+
 
             End block
  
-            <input type = "text" id = "txtEndBlock" />
+        </t> <input type = "text" id = "txtEndBlock" />
             <br/>
+            <br/>
+    
 
             End point
 
-            <input type = "text" id = "txtEndPoint" />
+        </t><input type = "text" id = "txtEndPoint" />
             <br/>
 
             <input type = "button" id = "queryevents" value = "Scan" /> 
             <br />
             <br />
             
-            <textarea id="eventsview" name="txtarea" rows="20" cols="50">
-
+            <!-- <textarea id="eventsview" name="txtarea" rows="20" cols="50"> -->
+                <textarea  id="eventsview" cols="50" rows="50" style="overflow:hidden;">
             </textarea>
          
             <br />
@@ -122,6 +115,8 @@
                
         </div>
     </div>
+
+
     
 
 </body>
