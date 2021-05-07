@@ -22,7 +22,7 @@
                        var r = confirm("Do you want to set this field to the default(latest) block?");
                         if (r == true) {
                            
-                            $('#txtEndBlock').val("default")
+                            $('#txtEndBlock').val("latest block will be fetched in back end.")
                         } else {
                             alert('Enter end block number.');
                         }
@@ -45,7 +45,7 @@
                 }
                 
 
-                var url = '/queryEvent?startblock='+ $('#txtStartBlock').val() + '&endBlock=' + $('#txtEndBlock').val() + '&endPoint=' + $('#txtEndPoint').val()
+                var url = '/queryEvent?startblock='+ $('#txtStartBlock').val() + '&endBlock=' + "default" + '&endPoint=' + $('#txtEndPoint').val()
                 $.get(url, function (data) {
             
                     $("#eventsview").val(data);
@@ -81,21 +81,21 @@
             <br/>
      
             Start block
-        </t> <input type = "text" id = "txtStartBlock"  />
+        </t> <input type = "text" id = "txtStartBlock" width="50px" />
         <br/>
         <br/>
 
 
             End block
  
-        </t> <input type = "text" id = "txtEndBlock" />
+        </t> <input type = "text" id = "txtEndBlock" width="50px" />
             <br/>
             <br/>
     
 
             End point
 
-        </t><input type = "text" id = "txtEndPoint" />
+        </t><input type = "text" id = "txtEndPoint" width="100px"/>
             <br/>
 
             <input type = "button" id = "queryevents" value = "Scan" /> 
