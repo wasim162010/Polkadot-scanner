@@ -48,6 +48,9 @@ const queryEvent = async (_startblock,_endBlock,_endPoint) => { //to verify the 
   const api = await ApiPromise.create({ provider: httpProvider });  
   console.log("api")
 
+  if(_endBlock == "default") {
+
+  }
   //const height = 4886511;
   //const blockHash = await api.rpc.chain.getBlockHash(height);
   let eventArray = [];
@@ -131,7 +134,7 @@ const traverseEvents = async() => {
 // res.sendFile(__dirname + '/static/login.html');
 
 app.get('/', async (req, res) => { //to verify the user.
-    
+  await fetchcurblock();
   res.sendFile(__dirname + '/UI/static/index.html');
 });
 
@@ -182,7 +185,41 @@ app.get('/traverseEvents', async (req, res) => { //to verify the user.
 
 
 
+const fetchcurblock = async() => {
 
+  const httpProvider = new HttpProvider(process.env.DATAHUB_URL);
+  console.log("httpProvider")
+  const api = await ApiPromise.create({ provider: httpProvider });  
+  console.log("api")
+
+  // const lastHdr = await api.rpc.chain.getHeader();
+  // console.log("lastHdr.number " , lastHdr.number);
+
+
+  // retrieve the last header (hash optional)
+// const header = await api.derive.chain.getHeader();
+
+// console.log(`#${header.number}: ${header.author}`);
+  // const chain  =await api.rpc.system.chain();
+  // const lastheader= await api.rpc.chain.getHeader();
+  // console.log(lastheader.number.number);
+
+// Retrieve the chain name
+const chain = await api.rpc.system.chain();
+
+// Retrieve the latest header
+const lastHeader = await api.rpc.chain.getHeader();
+
+console.log("lastHeader.number ", lastHeader.number);
+
+let num ='${chain}: last block #${lastHeader.number} has hash ${lastHeader.hash}'
+console.log('num is ', num)
+// Log the informations
+console.log('last block ${lastHeader.number}');
+
+}
+
+//
 
 
         
