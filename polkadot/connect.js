@@ -1,11 +1,13 @@
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const { HttpProvider } = require('@polkadot/rpc-provider');
-var session = require('express-session');//session
-require("dotenv").config({path: '.env'});
 
 const express = require('express'); // Include ExpressJS
 const app = express(); // Create an ExpressJS app
 const bodyParser = require('body-parser'); // middleware
+
+var session = require('express-session');//session
+
+require("dotenv").config({path: '.env'});
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({resave: true, saveUninitialized: true, secret: 'XCR3rsasa%RDHHH', cookie: { maxAge: 60000 }}));
 
@@ -18,10 +20,6 @@ app.get('/', async (req, res) => {
   res.sendFile(__dirname + '/UI/static/index.html');
 });
 
-// Route to Login Page
-    //    app.get('/login',  async (req, res) => {
-       // res.sendFile(__dirname + '/UI/static/login.html');
-//});
 
 app.get('/login', async (req, res) => { 
   res.sendFile(__dirname + '/UI/static/login.html');
@@ -29,7 +27,7 @@ app.get('/login', async (req, res) => {
 
 
 app.post('/homepage', async (req, res) => {
-     //   checkSession(req, res);
+   
         let username = req.body.username;
         console.log("username ",username);
 
@@ -47,13 +45,7 @@ app.post('/homepage', async (req, res) => {
 });
 
 
-// app.post('/fetchlatestblock', async (req, res) => {
-
-//   let header = await api.rpc.chain.getHeader();
-//   let _endBlockNumber = header.toJSON().number;
-//   console.log("_endBlockNumber ", _endBlockNumber)
-
-app.get('/queryEvent', async (req, res) => { //to verify the user.
+app.get('/queryEvent', async (req, res) => { 
 
     console.log("checkSession doing");
     checkSession(req, res);
@@ -76,10 +68,6 @@ app.get('/queryEvent', async (req, res) => { //to verify the user.
 app.get('/logout', async function(req, res, next) {
 
   req.session.destroy();
-  // destroy session data
- // req.session = null;
-
-  // redirect to homepage
   res.sendFile(__dirname + '/UI/static/login.html');
 });
 
@@ -96,7 +84,7 @@ const verify = async (username) => { //to verify the user.
   const { decodeAddress, encodeAddress } = require('@polkadot/keyring');//val  
   const { hexToU8a, isHex } = require('@polkadot/util'); //val
 
-  const address = username //process.env.ADDRESS //'5GrpknVvGGrGH3EFuURXeMrWHvbpj3VfER1oX5jFtuGbfzCE';
+  const address = username //process.env.ADDRESS
   console.log("address ",address)
   try {
     encodeAddress(
@@ -114,7 +102,7 @@ const verify = async (username) => { //to verify the user.
 
 
 
-const queryEvent = async (_startblock,_endBlock,_endPoint) => { //to verify the user.
+const queryEvent = async (_startblock,_endBlock,_endPoint) => { 
 
         console.log("queryEvent ",_startblock, _endBlock ,_endPoint );
         var providerObj;
@@ -169,16 +157,6 @@ const queryEvent = async (_startblock,_endBlock,_endPoint) => { //to verify the 
                   eventArray.push(phase.toString());
                   
                 });
-                // eventArray.push(event.section);
-              
-          
-            // loop through each of the parameters, displaying the type and data
-            // event.data.forEach((data, index) => {
-            //   const { event , phase } = record;
-            //     console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
-            //     eventArray.push(types[index].type);
-            //     eventArray.push(data.toString());
-            //   });
         }
           return eventArray
 }
@@ -186,13 +164,11 @@ const queryEvent = async (_startblock,_endBlock,_endPoint) => { //to verify the 
 const checkSession = async (req, res) => { 
 
   if(!req.session.user){
-
-   // alert("Seems like the session does not  exist.Redirecting to the login page");
     JSAlert.alert("Seems like the session does not  exist.Redirecting to the login page");
     res.sendFile(__dirname + '/UI/static/login.html');
-  //  return false;
+ 
   } else {
-    //return true
+
   }
 
 }
