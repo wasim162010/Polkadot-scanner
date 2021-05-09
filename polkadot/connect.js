@@ -1,13 +1,16 @@
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const { HttpProvider } = require('@polkadot/rpc-provider');
+var session = require('express-session');//session
 require("dotenv").config({path: '.env'});
 
 const express = require('express'); // Include ExpressJS
 const app = express(); // Create an ExpressJS app
 const bodyParser = require('body-parser'); // middleware
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(session({resave: true, saveUninitialized: true, secret: 'XCR3rsasa%RDHHH', cookie: { maxAge: 60000 }}));
 
 const port = 3000 
+var sessionData;
 
 app.listen(port, () => console.log(`This app is listening on port ${port}`));
     
@@ -16,16 +19,24 @@ app.get('/', async (req, res) => {
 });
 
 // Route to Login Page
-        app.get('/login',  async (req, res) => {
-        res.sendFile(__dirname + '/UI/static/login.html');
+    //    app.get('/login',  async (req, res) => {
+       // res.sendFile(__dirname + '/UI/static/login.html');
+//});
+
+app.get('/login', async (req, res) => { 
+  res.sendFile(__dirname + '/UI/static/login.html');
 });
 
 
-
-app.post('/login', async (req, res) => {
-
+app.post('/homepage', async (req, res) => {
+     //   checkSession(req, res);
         let username = req.body.username;
         console.log("username ",username);
+
+        sessionData = req.session;
+        sessionData.user = {};
+        sessionData.user.username = username;
+
         var istrue = await verify(username);
         console.log("istrue ",istrue);
         if(istrue) {
@@ -36,11 +47,24 @@ app.post('/login', async (req, res) => {
 });
 
 
+// app.post('/fetchlatestblock', async (req, res) => {
+
+//   let header = await api.rpc.chain.getHeader();
+//   let _endBlockNumber = header.toJSON().number;
+//   console.log("_endBlockNumber ", _endBlockNumber)
+
 app.get('/queryEvent', async (req, res) => { //to verify the user.
+
+    console.log("checkSession doing");
+    checkSession(req, res);
+    console.log("checkSession done");
 
     let _startblock = req.query.startblock;
     let _endBlock = req.query.endBlock;
     let _endPoint = req.query.endPoint;
+
+
+    console.log("_startblock ", _startblock ," _endBlock ", _endBlock, " _endPoint ", _endPoint);
 
     var details = await queryEvent(_startblock,_endBlock,_endPoint);
     console.log("details ", details)
@@ -48,6 +72,16 @@ app.get('/queryEvent', async (req, res) => { //to verify the user.
 });
   
   
+// Logout
+app.get('/logout', async function(req, res, next) {
+
+  req.session.destroy();
+  // destroy session data
+ // req.session = null;
+
+  // redirect to homepage
+  res.sendFile(__dirname + '/UI/static/login.html');
+});
 
 
 const verify = async (username) => { //to verify the user.
@@ -85,8 +119,8 @@ const queryEvent = async (_startblock,_endBlock,_endPoint) => { //to verify the 
         console.log("queryEvent ",_startblock, _endBlock ,_endPoint );
         var providerObj;
 
-        if(_endPoint.toString() =="default provider set in background"){
-          providerObj= new WsProvider("wss://rpc.polkadot.io")
+        if(_endPoint.toString() =="wss://rpc.polkadot.io"){
+          providerObj= new WsProvider(_endPoint)
         }else {
           providerObj = new HttpProvider(_endPoint)
         }
@@ -98,8 +132,8 @@ const queryEvent = async (_startblock,_endBlock,_endPoint) => { //to verify the 
         var initialBlock = 0
         initialBlock  = _startblock
         let eventArray = [];
-        if(_endBlock == "default") {
-            console.log("in defautt ")
+        if(_endBlock == "latest block") {
+            console.log("latest block ")
             let header = await api.rpc.chain.getHeader();
             let _endBlockNumber = header.toJSON().number;
             console.log("_endBlockNumber ", _endBlockNumber)
@@ -147,6 +181,20 @@ const queryEvent = async (_startblock,_endBlock,_endPoint) => { //to verify the 
             //   });
         }
           return eventArray
+}
+
+const checkSession = async (req, res) => { 
+
+  if(!req.session.user){
+
+   // alert("Seems like the session does not  exist.Redirecting to the login page");
+    JSAlert.alert("Seems like the session does not  exist.Redirecting to the login page");
+    res.sendFile(__dirname + '/UI/static/login.html');
+  //  return false;
+  } else {
+    //return true
+  }
+
 }
 
         

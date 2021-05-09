@@ -22,7 +22,7 @@
                        var r = confirm("Do you want to set this field to the default(latest) block?");
                         if (r == true) {
                            
-                            $('#txtEndBlock').val("latest block will be fetched in back end.")
+                            $('#txtEndBlock').val("latest block")
                         } else {
                             alert('Enter end block number.');
                         }
@@ -33,7 +33,7 @@
                         var r = confirm("Do you want to set this field to the default(wss://rpc.polkadot.io) endpoint?");
                         if (r == true) {
                           
-                            $('#txtEndPoint').val("default provider set in background")
+                            $('#txtEndPoint').val("wss://rpc.polkadot.io")     //("default provider set in background")
                         } else {
                             alert('Enter the end point');
                         }
@@ -44,13 +44,21 @@
                     alert('Start block number cannot be greater then end block');
                 }
                 
-
-                var url = '/queryEvent?startblock='+ $('#txtStartBlock').val() + '&endBlock=' + "default" + '&endPoint=' + $('#txtEndPoint').val()
-                $.get(url, function (data) {
-            
+                if( $('#txtEndBlock').val() == "latest block") {
+                    var url = '/queryEvent?startblock='+ $('#txtStartBlock').val() + '&endBlock=' + "latest block" + '&endPoint=' + $('#txtEndPoint').val()
+                    $.get(url, function (data) {
                     $("#eventsview").val(data);
-                 
-                });
+         
+                     });
+                } else {
+                    var url = '/queryEvent?startblock='+ $('#txtStartBlock').val() + '&endBlock=' + $('#txtEndBlock').val() + '&endPoint=' + $('#txtEndPoint').val()
+                    $.get(url, function (data) {
+                    $("#eventsview").val(data);
+         
+                     });
+                }
+                
+               
 
             });
 
@@ -69,6 +77,8 @@
 </head>
 
 <body>
+
+        <a href="/logout">Logout</a>
 
     <div class="container">
         <div class="jumbotron">
